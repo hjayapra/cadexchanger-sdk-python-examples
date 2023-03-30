@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# $Id$
+#  $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
 # Copyright (C) 2014-2023, CADEX. All rights reserved.
@@ -35,69 +35,58 @@ from pathlib import Path
 import os
 
 import cadexchanger.CadExCore as cadex
+import cadexchanger.CadExSLD as sld
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
-
-class InstancesTransformationsVisitor(cadex.ModelData_Model_VoidElementVisitor):
+class PartConfigurationVisitor(cadex.ModelData_Model_VoidElementVisitor):
     def __init__(self):
         super().__init__()
 
-        # We are going to multiply each matrix to produce transformations relative to the SceneGraph root
-        self.myTransformationMatrix = []
-        anIdentity = cadex.ModelData_Transformation()
-        self.myTransformationMatrix.append(anIdentity)
+    def VisitPart(self, thePart: cadex.ModelData_Part):
+        aManager = thePart.Configurations()
+        if aManager is not None:
+            self.ExploreConfigurations(aManager)
 
-    def VisitEnterInstance(self, theInstance: cadex.ModelData_Instance) -> bool:
-        aTrsf = cadex.ModelData_Transformation()
-        if theInstance.HasTransformation():
-            aTrsf = theInstance.Transformation()
+    def ExploreConfigurations(self, theManager: cadex.ModelData_ConfigurationManager):
+        print("Number of part configurations: ", theManager.NumberOfConfigurations())
+        anIterator = theManager.GetConfigurationIterator()
+        while anIterator.HasNext():
+            anElement = anIterator.Next()
+            print("Part configuration name: ", cadex.ModelData_ConfigurationManager.ConfigurationName(anElement))
 
-        aCumulativeTrsf = self.myTransformationMatrix[-1].Multiplied(aTrsf)
-        self.myTransformationMatrix.append(aCumulativeTrsf)
-        self.PrintTransformation(theInstance.Name())
-        return True
 
-    def PrintTransformation(self, theName: cadex.Base_UTF16String):
-        if not theName:
-            theName = cadex.Base_UTF16String("noName")
-        print(f"Instance {theName} has transformations:")
-
-        # Current transformations are relative to the SceneGraph root
-        v00, v01, v02, v10, v11, v12, v20, v21, v22 = self.myTransformationMatrix[-1].RotationPart()
-        aTranslation = self.myTransformationMatrix[-1].TranslationPart()
-        print(f"| {v00} {v01} {v02} {aTranslation.X()} |")
-        print(f"| {v10} {v11} {v12} {aTranslation.Y()} |")
-        print(f"| {v20} {v21} {v22} {aTranslation.Z()} |")
-
-    def VisitLeaveInstance(self, theInstance: cadex.ModelData_Instance):
-        self.myTransformationMatrix.pop()
-
-        
-def main(theSource):
+def main(theSource: str):
     anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
     if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
-
+    
+    # Open the model
     aModel = cadex.ModelData_Model()
+    
+    # Read all configurations
+    aParameters = sld.SLD_ReaderParameters()
+    aParameters.SetConfigurationsMode(sld.SLD_ReaderParameters.All)
+    
+    aReader = cadex.ModelData_ModelReader();
+    aReader.SetReaderParameters(aParameters)
 
-    if not cadex.ModelData_ModelReader().Read(cadex.Base_UTF16String(theSource), aModel):
+    if not aReader.Read(cadex.Base_UTF16String(theSource), aModel):
         print("Failed to read the file " + theSource)
         return 1
 
-    # Visitor to check and print transformations of instances
-    aVisitor = InstancesTransformationsVisitor()
-    aModel.AcceptElementVisitor(aVisitor)
+    aVisitor = PartConfigurationVisitor()
 
-    print("Completed")
+    aModel.AcceptElementVisitor(aVisitor)
     return 0
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: " + os.path.abspath(Path(__file__).resolve()) + " <input_file>, where:")
-        print("    <input_file>  is a name of the XML file to be read")
-        sys.exit(1)
+        print("    <input_file>  is a name of the SLD file to be read")
+        sys.exit()
 
     aSource = os.path.abspath(sys.argv[1])
+
     sys.exit(main(aSource))

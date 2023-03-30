@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -36,8 +36,7 @@ import os
 
 import cadexchanger.CadExCore as cadex
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
 
 class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
@@ -47,7 +46,7 @@ class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
         self.myShapeSet = set()
 
     def PrintUniqueShapesCount(self):
-        print()
+        print();
         print(f"Total unique shapes count: {len(self.myShapeSet)}")
 
     def VisitPart(self, thePart: cadex.ModelData_Part):
@@ -78,13 +77,13 @@ class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
     # Returns body type name
     def PrintBodyType(self, theBody: cadex.ModelData_Body) -> str:
         aType = theBody.BodyType()
-        if aType == cadex.ModelData_BT_Solid:
+        if aType == cadex.ModelData_BT_Solid: 
             return "Solid"
-        if aType ==  cadex.ModelData_BT_Sheet:
+        if aType ==  cadex.ModelData_BT_Sheet: 
             return "Sheet"
-        if aType == cadex.ModelData_BT_Wireframe:
+        if aType == cadex.ModelData_BT_Wireframe: 
             return "Wireframe"
-        if aType == cadex.ModelData_BT_Acorn:
+        if aType == cadex.ModelData_BT_Acorn: 
             return "Acorn"
         return "Undefined"
 
@@ -93,11 +92,11 @@ class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
         self.PrintTabulation()
 
         aType = theShape.Type()
-        if aType == cadex.ModelData_ST_Body:
+        if aType == cadex.ModelData_ST_Body: 
             print("Body", end="")
-        elif aType == cadex.ModelData_ST_Solid:
+        elif aType == cadex.ModelData_ST_Solid: 
             print("Solid", end="")
-        elif aType == cadex.ModelData_ST_Shell:
+        elif aType == cadex.ModelData_ST_Shell: 
             print("Shell", end="")
         elif aType == cadex.ModelData_ST_Wire:
             print("Wire", end="")
@@ -120,9 +119,9 @@ class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
     def PrintOrientationInfo(self, theShape: cadex.ModelData_Shape):
         print(". Orientation: ", end="")
         anOrientation = theShape.Orientation()
-        if anOrientation == cadex.ModelData_SO_Forward:
+        if anOrientation == cadex.ModelData_SO_Forward: 
             print("Forward", end="")
-        elif anOrientation == cadex.ModelData_SO_Reversed:
+        elif anOrientation == cadex.ModelData_SO_Reversed: 
             print("Reversed", end="")
 
     def PrintWireInfo(self, theWire: cadex.ModelData_Wire):
@@ -141,27 +140,27 @@ class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
 
     def PrintSurfaceType(self, theSurface: cadex.ModelData_Surface) -> str:
         aType = theSurface
-        if aType == cadex.ModelData_ST_Plane:
+        if aType == cadex.ModelData_ST_Plane: 
             return "Plane"
-        if aType == cadex.ModelData_ST_Cylinder:
+        if aType == cadex.ModelData_ST_Cylinder: 
             return "Cylinder"
-        if aType == cadex.ModelData_ST_Cone:
+        if aType == cadex.ModelData_ST_Cone: 
             return "Cone"
-        if aType == cadex.ModelData_ST_Sphere:
+        if aType == cadex.ModelData_ST_Sphere: 
             return "Sphere"
-        if aType == cadex.ModelData_ST_Torus:
+        if aType == cadex.ModelData_ST_Torus: 
             return "Torus"
-        if aType == cadex.ModelData_ST_LinearExtrusion:
+        if aType == cadex.ModelData_ST_LinearExtrusion: 
             return "LinearExtrusion"
-        if aType == cadex.ModelData_ST_Revolution:
+        if aType == cadex.ModelData_ST_Revolution: 
             return "Revolution"
-        if aType == cadex.ModelData_ST_Bezier:
+        if aType == cadex.ModelData_ST_Bezier: 
             return "Bezier"
-        if aType == cadex.ModelData_ST_BSpline:
+        if aType == cadex.ModelData_ST_BSpline: 
             return "BSpline"
-        if aType == cadex.ModelData_ST_Offset:
+        if aType == cadex.ModelData_ST_Offset: 
             return "Offset"
-        if aType == cadex.ModelData_ST_Trimmed:
+        if aType == cadex.ModelData_ST_Trimmed: 
             return "Trimmed"
         return "Undefined"
 
@@ -182,23 +181,23 @@ class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
 
     def PrintCurveType(self, theCurve: cadex.ModelData_Curve) -> str:
         aType = theCurve.Type()
-        if aType == cadex.ModelData_CT_Line:
+        if aType == cadex.ModelData_CT_Line: 
             return "Line"
-        if aType == cadex.ModelData_CT_Circle:
+        if aType == cadex.ModelData_CT_Circle: 
             return "Circle"
-        if aType == cadex.ModelData_CT_Ellipse:
+        if aType == cadex.ModelData_CT_Ellipse: 
             return "Ellipse"
-        if aType == cadex.ModelData_CT_Hyperbola:
+        if aType == cadex.ModelData_CT_Hyperbola: 
             return "Hyperbola"
-        if aType == cadex.ModelData_CT_Parabola:
+        if aType == cadex.ModelData_CT_Parabola: 
             return "Parabola"
-        if aType == cadex.ModelData_CT_Bezier:
+        if aType == cadex.ModelData_CT_Bezier: 
             return "Bezier"
-        if aType == cadex.ModelData_CT_BSpline:
+        if aType == cadex.ModelData_CT_BSpline: 
             return "BSpline"
-        if aType == cadex.ModelData_CT_Offset:
+        if aType == cadex.ModelData_CT_Offset: 
             return "Offset"
-        if aType == cadex.ModelData_CT_Trimmed:
+        if aType == cadex.ModelData_CT_Trimmed: 
             return "Trimmed"
         return "Undefined"
 
@@ -211,9 +210,8 @@ class PartBRepVisitor(cadex.ModelData_Model_VoidElementVisitor):
 
 
 def main(theSource:str):
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -222,13 +220,13 @@ def main(theSource:str):
     if not cadex.ModelData_ModelReader().Read(cadex.Base_UTF16String(theSource), aModel):
         print("Failed to read the file " + theSource)
         return 1
-
+        
     # Explore B-Rep representation of model parts
     aVisitor = PartBRepVisitor()
     aModel.AcceptElementVisitor(aVisitor)
 
     aVisitor.PrintUniqueShapesCount()
-
+    
     print("Completed")
     return 0
 

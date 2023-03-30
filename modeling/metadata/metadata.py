@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -36,14 +36,12 @@ import os
 
 import cadexchanger.CadExCore as cadex
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
 
 def main():
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -78,3 +76,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

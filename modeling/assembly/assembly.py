@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -36,15 +36,14 @@ import os
 
 import cadexchanger.CadExCore as cadex
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 import math
 
 def MakeDirection(theVector: cadex.ModelData_Vector) -> cadex.ModelData_Direction:
     aVector = theVector.Normalized()
     return cadex.ModelData_Direction(aVector.X(), aVector.Y(), aVector.Z())
 
-def MakeCircularFace(thePos: cadex.ModelData_Point,
+def MakeCircularFace(thePos: cadex.ModelData_Point, 
                      theDir: cadex.ModelData_Direction,
                      theBoundary: cadex.ModelData_Edge) -> cadex.ModelData_Face:
     a3Axis = cadex.ModelData_Axis3Placement(thePos, theDir, cadex.ModelData_Direction.XDir())
@@ -54,7 +53,7 @@ def MakeCircularFace(thePos: cadex.ModelData_Point,
     aFace.Append(aWire)
     return aFace
 
-def MakeCircularFaceWithInnerWire(thePos: cadex.ModelData_Point,
+def MakeCircularFaceWithInnerWire(thePos: cadex.ModelData_Point, 
                                   theDir: cadex.ModelData_Direction,
                                   theInner: cadex.ModelData_Edge,
                                   theOuter: cadex.ModelData_Edge) -> cadex.ModelData_Face:
@@ -69,7 +68,7 @@ def MakeCircularFaceWithInnerWire(thePos: cadex.ModelData_Point,
     return aFace
 
 def MakeCylindricalFace(thePos: cadex.ModelData_Point,
-                        theDir: cadex.ModelData_Direction,
+                        theDir: cadex.ModelData_Direction, 
                         theRadius: cadex.ModelData_Direction,
                         theLength: float):
     a3Axis = cadex. ModelData_Axis3Placement(thePos, theDir, cadex.ModelData_Direction.XDir())
@@ -181,9 +180,8 @@ def CreateNutBoltAssembly(theNut: cadex.ModelData_Part,
 
 
 def main():
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -218,3 +216,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

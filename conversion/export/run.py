@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -30,13 +30,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+import subprocess
 import sys
 from pathlib import Path
 from  os.path import abspath, dirname
 from export import main
 
 
-aSource = abspath(dirname(Path(__file__).resolve()) + "/../../models/as1.xml")
-aDest = abspath(dirname(Path(__file__).resolve()) + "/as1.obj")
+aSource = abspath(dirname(Path(__file__).resolve()) + r"/../../models/as1.xml")
+aDest = abspath(dirname(Path(__file__).resolve()) + r"/as1.obj")
 
-sys.exit(main(aSource, aDest))
+aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/export.py")
+aPathToDevKey = abspath(dirname(Path(__file__).resolve()) + r"/../../cadex_license.lic")
+aPathToRuntimeKey = abspath(dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+import cadexchanger
+aPathToLicensingTool = abspath(dirname(Path(cadexchanger.__file__).resolve()) + r"/bin/LicensingTool")
+aRet = subprocess.run([aPathToLicensingTool, aPathToScript, aPathToDevKey, aPathToRuntimeKey])
+
+if aRet.returncode == 0:
+    sys.exit(main(aSource, aDest))
+else:
+    sys.exit(aRet.returncode)

@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -30,7 +30,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+import sys
+from pathlib import Path
+import os
+
+
 import cadexchanger.CadExCore as cadex
+
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
 class BaseExplorer:
     def __init__(self):

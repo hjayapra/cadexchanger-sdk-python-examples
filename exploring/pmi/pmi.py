@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -37,8 +37,8 @@ import os
 import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExSTEP as step
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+
 
 class TabulatedOutput:
     myNestingLevel = 0
@@ -153,7 +153,18 @@ class PMISemanticVisitor(cadex.ModelData_PMISemanticElementComponentVisitor):
         TabulatedOutput.WriteLine("Geometric tolerance")
         TabulatedOutput.IncreaseIndent()
         TabulatedOutput.WriteLine(f"Magnitude: {theComponent.Magnitude()}")
+        TabulatedOutput.WriteLine(f"Type of tolerance: {int(theComponent.TypeOfTolerance())}")
         TabulatedOutput.WriteLine(f"Tolerance zone form: {int(theComponent.ToleranceZoneForm())}")
+        self.PrintAttributes(theComponent)
+        TabulatedOutput.DecreaseIndent()
+        
+    def VisitSurfaceFinishComponent(self, theComponent: cadex.ModelData_PMISurfaceFinishComponent):
+        TabulatedOutput.WriteLine("Surface Finish")
+        TabulatedOutput.IncreaseIndent()
+        TabulatedOutput.WriteLine(f"Material removal: {int(theComponent.MaterialRemoval())}")
+        TabulatedOutput.WriteLine(f"Lay direction: {int(theComponent.LayDirection())}")
+        TabulatedOutput.WriteLine(f"All around flag: {int(theComponent.IsAllAround())}")
+        TabulatedOutput.WriteLine(f"Manufacturing method: {theComponent.ManufacturingMethod()}")
         self.PrintAttributes(theComponent)
         TabulatedOutput.DecreaseIndent()
 
@@ -168,13 +179,13 @@ class PMISemanticAttributeVisitor(cadex.ModelData_PMISemanticAttributeVisitor):
 
     def VisitModifierWithValueAttribute(self, theAttribute: cadex.ModelData_PMIModifierWithValueAttribute):
         TabulatedOutput.WriteLine(f"ModifierWithValue: modifier={theAttribute.Modifier()}, value={theAttribute.Value()}")
-
+    
     def VisitQualifierAttribute(self, theAttribute: cadex.ModelData_PMIQualifierAttribute):
         TabulatedOutput.WriteLine(f"Qualifier: {theAttribute.Qualifier()}")
 
     def VisitPlusMinusBoundsAttribute(self, theAttribute: cadex.ModelData_PMIPlusMinusBoundsAttribute):
         TabulatedOutput.WriteLine(f"PlusMinusBounds: ({theAttribute.LowerBound()}, {theAttribute.UpperBound()})")
-
+    
     def VisitRangeAttribute(self, theAttribute: cadex.ModelData_PMIRangeAttribute):
         TabulatedOutput.WriteLine(f"Range: [{theAttribute.LowerLimit()}, {theAttribute.UpperLimit()}]")
 
@@ -221,6 +232,27 @@ class PMISemanticAttributeVisitor(cadex.ModelData_PMISemanticAttributeVisitor):
 
     def VisitAngleUnitAttribute(self, theAttribute: cadex.ModelData_PMIAngleUnitAttribute):
         TabulatedOutput.WriteLine(f"AngleUnit: {theAttribute.Unit()}")
+        
+    def VisitMachiningAllowanceAttribute(self, theAttribute: cadex.ModelData_PMIMachiningAllowanceAttribute):
+        TabulatedOutput.WriteLine("Machining allowance")
+        TabulatedOutput.IncreaseIndent()
+        TabulatedOutput.WriteLine(f"Value: {theAttribute.Value()}")
+        TabulatedOutput.WriteLine(f"Upper bound: {theAttribute.UpperBound()}")
+        TabulatedOutput.WriteLine(f"Lower bound: {theAttribute.LowerBound()}")
+        TabulatedOutput.DecreaseIndent()
+
+    def VisitSurfaceTextureRequirementAttribute(self, theAttribute: cadex.ModelData_PMISurfaceTextureRequirementAttribute):
+        TabulatedOutput.WriteLine(f"Surface texture requirement #: {int(theAttribute.Precedence())}")
+        TabulatedOutput.IncreaseIndent()
+        TabulatedOutput.WriteLine(f"Specification limit: {int(theAttribute.SpecificationLimit())}")
+        TabulatedOutput.WriteLine(f"Filter name: {theAttribute.FilterName()}")
+        TabulatedOutput.WriteLine(f"Short wave filter: {theAttribute.ShortWaveFilter()}")
+        TabulatedOutput.WriteLine(f"Long wave filter: {theAttribute.LongWaveFilter()}")
+        TabulatedOutput.WriteLine(f"Surface parameter: {int(theAttribute.SurfaceParameter())}")
+        TabulatedOutput.WriteLine(f"Evaluation length: {theAttribute.EvaluationLength()}")
+        TabulatedOutput.WriteLine(f"Comparison rule: {int(theAttribute.ComparisonRule())}")
+        TabulatedOutput.WriteLine(f"Limit value: {theAttribute.LimitValue()}")
+        TabulatedOutput.DecreaseIndent()
 
 class PMIGraphicalVisitor(cadex.ModelData_PMIGraphicalElementComponentVisitor):
     def VisitOutlinedComponent(self, theComponent: cadex.ModelData_PMIOutlinedComponent):
@@ -241,10 +273,10 @@ class PMIOutlineVisitor(cadex.ModelData_PMIOutlineVisitor):
 
     def VisitPoly2dOutline(self, theOutline: cadex.ModelData_PMIPoly2dOutline):
         TabulatedOutput.WriteLine(f"PolyLine2d set [{theOutline.LineSet().NumberOfPolyLines()} polylines]")
-
+    
     def VisitCurveOutline(self, theOutline: cadex.ModelData_PMICurveOutline):
         TabulatedOutput.WriteLine(f"Curve set [{theOutline.NumberOfCurves()} curves]")
-
+    
     def VisitCurve2dOutline(self, theOutline: cadex.ModelData_PMICurve2dOutline):
         TabulatedOutput.WriteLine(f"Curve2d set [{theOutline.NumberOfCurves()} curves]")
 
@@ -257,9 +289,8 @@ class PMIOutlineVisitor(cadex.ModelData_PMIOutlineVisitor):
         TabulatedOutput.DecreaseIndent()
 
 def main(theSource: str):
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -280,7 +311,7 @@ def main(theSource: str):
 
     print("Completed")
     return 0
-
+    
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("    <input_file>  is a name of the STEP file to be read")

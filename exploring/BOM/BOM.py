@@ -3,7 +3,7 @@
 #  $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -36,8 +36,7 @@ import os
 
 import cadexchanger.CadExCore as cadex
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
 class SceneGraphVisitor(cadex.ModelData_Model_ElementVisitor):
     def __init__(self):
@@ -79,7 +78,7 @@ class SceneGraphVisitor(cadex.ModelData_Model_ElementVisitor):
         for i in self.mySGEMap:
             aName = str(i.Name())
             aType = self.PrintSGEType(i)
-            print("\t" + aName.ljust(self.margin) + " | " +
+            print("\t" + aName.ljust(self.margin) + " | " + 
                   aType.ljust(self.margin) + " | " + str(self.mySGEMap[i]))
 
 
@@ -97,7 +96,7 @@ class SceneGraphVisitor(cadex.ModelData_Model_ElementVisitor):
         self.PrintName("Instance", theInstance.Name())
         self.myNestingLevel += 1
         return True
-
+            
     def VisitLeaveAssembly(self, theAssembly: cadex.ModelData_Assembly):
         self.myNestingLevel -= 1
 
@@ -106,9 +105,8 @@ class SceneGraphVisitor(cadex.ModelData_Model_ElementVisitor):
 
 
 def main(theSource: str):
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 

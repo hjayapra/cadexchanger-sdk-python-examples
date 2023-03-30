@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -30,8 +30,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+import sys
+from pathlib import Path
+import os
+
+
 import cadexchanger.CadExCore as cadex
 from base_explorer import BaseExplorer
+
 
 class CurveExplorer(BaseExplorer):
     # Prints curve type name and prints shape info in some cases
@@ -149,7 +155,7 @@ class CurveExplorer(BaseExplorer):
 
         def PrintWeight(i):
             aWeight = theBSpline.Weight(i)
-            cls.PrintParameter(aWeight)
+            cls.PrintParameter(aWeight)            
 
         cls.Print2dCollection("Weights", aNumberOfPoles, PrintWeight)
 

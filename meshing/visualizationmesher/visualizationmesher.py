@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -37,79 +37,54 @@ import os
 import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExMesh as mesh
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+
 
 import math
 
 
-# Visits directly every part and calls Poly representation exploring if a part has one
-class PartVisitor(cadex.ModelData_Model_VoidElementVisitor):
-    def __init__ (self):
-        super().__init__()
+class FirstFaceGetter(cadex.ModelData_Model_VoidElementVisitor):
+    def __init__(self):
+        cadex.ModelData_Model_VoidElementVisitor.__init__(self)
+        self.myFace = None
 
     def VisitPart(self, thePart: cadex.ModelData_Part):
-        # We need to get last poly representation because if model already
-        # has poly representation, new representation with BRep-To-Poly associations
-        # will be added to the end of representation list.
-        aLastPolyRep = cadex.ModelData_PolyRepresentation()
+        if self.myFace is None:
+            aBRep = thePart.BRepRepresentation()
+            self.ExploreBRep(aBRep)
 
-        for aRep in thePart.GetRepresentationIterator():
-            if aRep.TypeId() == cadex.ModelData_PolyRepresentation.GetTypeId():
-                aLastPolyRep = cadex.ModelData_PolyRepresentation.Cast (aRep)
-
-        self.ExplorePoly (aLastPolyRep)
-        self.ExploreBRep (thePart.BRepRepresentation(), aLastPolyRep)
-
-    def ExploreShape(self,
-                     theShape: cadex.ModelData_Shape,
-                     thePolyRep: cadex.ModelData_PolyRepresentation):
-        aFaceIt = cadex.ModelData_Shape_Iterator(theShape, cadex.ModelData_ST_Face)
-        anFCounter = 0
-        for aFaceShape in aFaceIt:
-            aFace = cadex.ModelData_Face.Cast (aFaceShape)
-            anITS = thePolyRep.Triangulation (aFace)
-            if not anITS:
-                continue
-            print(f"ITS {anFCounter} has: {anITS.NumberOfVertices()} vertices.")
-
-            anECounter = 0
-            anEdgeIt = cadex.ModelData_Shape_Iterator(aFaceShape, cadex.ModelData_ST_Edge)
-            for anEdgeShape in anEdgeIt:
-                anEdge = cadex.ModelData_Edge.Cast (anEdgeShape)
-                aPLS = thePolyRep.PolyLine (anEdge)
-                print(f"PLS {anFCounter}-{anECounter} has: {aPLS.NumberOfVertices()} vertices.")
-                anECounter += 1
-
-            anFCounter += 1
-
-    def ExploreBRep(self,
-                    theBRep: cadex.ModelData_BRepRepresentation,
-                    thePolyRep: cadex.ModelData_PolyRepresentation):
+    def ExploreBRep(self, theBRep: cadex.ModelData_BRepRepresentation):
         aBodyList = theBRep.Get()
-        for aBody in aBodyList:
-            self.ExploreShape (aBody, thePolyRep)
+        aFirstBody = aBodyList.First()
+        for aShape in cadex.ModelData_Shape_Iterator(aFirstBody, cadex.ModelData_ST_Face):
+            self.myFace = cadex.ModelData_Face.Cast(aShape)
+            break
+            
+    def FirstFace(self):
+        return self.myFace
 
-    def ExplorePoly(self, thePolyRep: cadex.ModelData_PolyRepresentation):
-        aPolyShapeList = thePolyRep.Get()
+def PrintFaceToPolyAssociation(theFace: cadex.ModelData_Face,
+                               theAssociations: cadex.ModelData_BRepToPolyAssociations):
+    aMeshPatch = theAssociations.Get(theFace)
+    anITS = cadex.ModelData_IndexedTriangleSet.Cast(aMeshPatch.PVS())
+    aTriangleIndices = aMeshPatch.Indices()
 
-        for i, aPolyShape in enumerate(aPolyShapeList):
-            aSourceShape = thePolyRep.SourceShape (aPolyShape)
-            if not aSourceShape:
-                continue
-            if aSourceShape.Type() == cadex.ModelData_ST_Face:
-                aFace = cadex.ModelData_Face.Cast (aSourceShape)
-                print(f"Poly shape on position {i}", end="")
-                if aFace.Surface().Type() == cadex.ModelData_ST_BSpline:
-                    print(" was generated from b-spline.")
-                else:
-                    print(" wasn't generated from b-spline.")
+    print(f"Face triangulation contains {len(aTriangleIndices)} triangles.")
 
+    aNumberOfTrianglesToPrint = min(4, len(aTriangleIndices))
+
+    for i in range(aNumberOfTrianglesToPrint):
+        aTriangleIndex = aTriangleIndices.Element(i)
+        print(f"Triangle index {aTriangleIndex} with vertices: ")
+        for aVertexNumber in range(3):
+            aVertexIndex = anITS.CoordinateIndex(aTriangleIndex, aVertexNumber);
+            aPoint = anITS.Coordinate(aVertexIndex);
+            print(f"  Vertex index {aVertexIndex} with coords",
+                  f"(X: {aPoint.X()}, Y: {aPoint.Y()}, Z: {aPoint.Z()})")
 
 def main(theSource: str):
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -127,11 +102,15 @@ def main(theSource: str):
 
     aMesher = cadex.ModelAlgo_BRepMesher(aParam)
     aMesher.Compute(aModel, True)
+    
+    # Example of using B-Rep to Poly representation associations:
+    aVisitor = FirstFaceGetter();
+    aModel.AcceptElementVisitor(aVisitor);
 
-    # Explore model:
-    aVisitor = PartVisitor()
-    aModel.AcceptElementVisitor(aVisitor)
-
+    aFace = aVisitor.FirstFace();
+    aBRepToPolyAssociations = aMesher.BRepToPolyAssociations();
+    PrintFaceToPolyAssociation(aFace, aBRepToPolyAssociations)
+    
     # Save the result
     if not cadex.ModelData_ModelWriter().Write(aModel, cadex.Base_UTF16String("out/VisMesher.xml")):
         print("Unable to save the model")

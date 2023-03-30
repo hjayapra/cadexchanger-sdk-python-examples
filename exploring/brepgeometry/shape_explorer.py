@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -28,6 +28,11 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
+
+import sys
+from pathlib import Path
+import os
 
 
 import cadexchanger.CadExCore as cadex
@@ -90,15 +95,15 @@ class ShapeExplorer(cadex.ModelData_Model_VoidElementVisitor, BaseExplorer):
 
         if theShape.Type() == cadex.ModelData_ST_Solid:
             print("Solid", end="")
-        elif theShape.Type() == cadex.ModelData_ST_Shell:
+        elif theShape.Type() == cadex.ModelData_ST_Shell:  
             self.PrintShell(cadex.ModelData_Shell.Cast(theShape))
-        elif theShape.Type() == cadex.ModelData_ST_Wire:
+        elif theShape.Type() == cadex.ModelData_ST_Wire:   
             self.PrintWire(cadex.ModelData_Wire.Cast(theShape))
-        elif theShape.Type() == cadex.ModelData_ST_Face:
+        elif theShape.Type() == cadex.ModelData_ST_Face:   
             self.PrintFace(cadex.ModelData_Face.Cast(theShape))
-        elif theShape.Type() == cadex.ModelData_ST_Edge:
+        elif theShape.Type() == cadex.ModelData_ST_Edge:   
             self.PrintEdge(cadex.ModelData_Edge.Cast(theShape))
-        elif theShape.Type() == cadex.ModelData_ST_Vertex:
+        elif theShape.Type() == cadex.ModelData_ST_Vertex: 
             self.PrintVertex(cadex.ModelData_Vertex.Cast(theShape))
         else:
             print("Undefined", end="")
@@ -143,7 +148,7 @@ class ShapeExplorer(cadex.ModelData_Model_VoidElementVisitor, BaseExplorer):
             self.PrintName("Curve")
             self.PrintRange("Edge Range", first, second)
             CurveExplorer.PrintCurveInfo(aCurve)
-
+            
         if self.myCurrentFace:
             aPCurve, first, second = theEdge.PCurve(self.myCurrentFace)
             print()
@@ -151,7 +156,7 @@ class ShapeExplorer(cadex.ModelData_Model_VoidElementVisitor, BaseExplorer):
             self.PrintName("PCurve")
             self.PrintRange("Edge Range", first, second)
             PCurveExplorer.PrintPCurveInfo(aPCurve)
-
+            
         self.myNestingLevel -= 1
 
     def PrintVertex(self, theVertex:cadex.ModelData_Vertex):

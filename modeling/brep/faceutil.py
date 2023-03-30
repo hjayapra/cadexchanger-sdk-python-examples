@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -28,6 +28,11 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
+
+import sys
+from pathlib import Path
+import os
 
 
 import cadexchanger.CadExCore as cadex
@@ -80,8 +85,8 @@ def MakeFaceFromSurfaceOfRevolution() -> cadex.ModelData_Face:
 
     aBasisCurve = cadex.ModelData_BezierCurve(aPoles)
 
-    aSurface = cadex.ModelData_SurfaceOfRevolution(aBasisCurve,
-                                                   cadex.ModelData_Point(0.0, 0.0, 0.0),
+    aSurface = cadex.ModelData_SurfaceOfRevolution(aBasisCurve, 
+                                                   cadex.ModelData_Point(0.0, 0.0, 0.0), 
                                                    cadex.ModelData_Direction.XDir())
     return cadex.ModelData_Face(aSurface, 0.0, math.pi + math.pi / 2, 0.1, 0.9)
 

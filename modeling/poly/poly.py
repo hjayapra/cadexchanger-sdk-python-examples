@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -36,14 +36,14 @@ import os
 
 import cadexchanger.CadExCore as cadex
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+
 
 def CreatePolyPointSet() -> cadex.ModelData_PolyPointSet:
     aPoints1 = cadex.ModelData_PointList()
     aPoints2 = cadex.ModelData_PointList()
 
-    for i in range(10):
+    for i  in range(10):
         aPoints1.append(cadex.ModelData_Point(i, 0, 0))
         aPoints2.append(cadex.ModelData_Point(i, 0, i))
 
@@ -58,7 +58,7 @@ def CreatePolyLineSet() -> cadex.ModelData_PolyPointSet:
     aPoints1 = cadex.ModelData_PointList()
     aPoints2 = cadex.ModelData_PointList()
 
-    for i in range(10):
+    for i  in range(10):
         aPoints1.append(cadex.ModelData_Point(i, 3, i / 2))
         aPoints2.append(cadex.ModelData_Point(i, 0, i % 2))
 
@@ -131,11 +131,11 @@ def CreateITS() -> cadex.ModelData_IndexedTriangleSet:
     return anITS
 
 def main():
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
+
     # Create PolyPointSet and explore it
     aPPS = CreatePolyPointSet()
 

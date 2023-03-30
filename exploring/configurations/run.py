@@ -33,12 +33,12 @@
 import subprocess
 import sys
 from pathlib import Path
-from os.path import abspath, dirname
-from polyrepresentation import main
+from  os.path import abspath, dirname
+from configurations import main
 
-aSource = abspath(dirname(Path(__file__).resolve()) + "/../../models/as1.xml")
+aSource = abspath(dirname(Path(__file__).resolve()) + "/../../models/Configuration_Part.SLDPRT")
 
-aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/polyrepresentation.py")
+aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/configurations.py")
 aPathToDevKey = abspath(dirname(Path(__file__).resolve()) + r"/../../cadex_license.lic")
 aPathToRuntimeKey = abspath(dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
 import cadexchanger

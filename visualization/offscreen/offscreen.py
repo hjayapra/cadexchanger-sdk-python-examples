@@ -35,69 +35,68 @@ from pathlib import Path
 import os
 
 import cadexchanger.CadExCore as cadex
+import cadexchanger.CadExView as view
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
-
-class InstancesTransformationsVisitor(cadex.ModelData_Model_VoidElementVisitor):
-    def __init__(self):
-        super().__init__()
-
-        # We are going to multiply each matrix to produce transformations relative to the SceneGraph root
-        self.myTransformationMatrix = []
-        anIdentity = cadex.ModelData_Transformation()
-        self.myTransformationMatrix.append(anIdentity)
-
-    def VisitEnterInstance(self, theInstance: cadex.ModelData_Instance) -> bool:
-        aTrsf = cadex.ModelData_Transformation()
-        if theInstance.HasTransformation():
-            aTrsf = theInstance.Transformation()
-
-        aCumulativeTrsf = self.myTransformationMatrix[-1].Multiplied(aTrsf)
-        self.myTransformationMatrix.append(aCumulativeTrsf)
-        self.PrintTransformation(theInstance.Name())
-        return True
-
-    def PrintTransformation(self, theName: cadex.Base_UTF16String):
-        if not theName:
-            theName = cadex.Base_UTF16String("noName")
-        print(f"Instance {theName} has transformations:")
-
-        # Current transformations are relative to the SceneGraph root
-        v00, v01, v02, v10, v11, v12, v20, v21, v22 = self.myTransformationMatrix[-1].RotationPart()
-        aTranslation = self.myTransformationMatrix[-1].TranslationPart()
-        print(f"| {v00} {v01} {v02} {aTranslation.X()} |")
-        print(f"| {v10} {v11} {v12} {aTranslation.Y()} |")
-        print(f"| {v20} {v21} {v22} {aTranslation.Z()} |")
-
-    def VisitLeaveInstance(self, theInstance: cadex.ModelData_Instance):
-        self.myTransformationMatrix.pop()
-
-        
-def main(theSource):
+def main(theSource: str, theDest: str):
     anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
     if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
-
+    
+    aReader = cadex.ModelData_ModelReader()
     aModel = cadex.ModelData_Model()
-
-    if not cadex.ModelData_ModelReader().Read(cadex.Base_UTF16String(theSource), aModel):
+    
+    # Reading the file
+    if not aReader.Read(cadex.Base_UTF16String(theSource), aModel):
         print("Failed to read the file " + theSource)
         return 1
-
-    # Visitor to check and print transformations of instances
-    aVisitor = InstancesTransformationsVisitor()
-    aModel.AcceptElementVisitor(aVisitor)
-
-    print("Completed")
+    
+    # Convert model into visualization entities
+    aFactory = view.ModelPrs_SceneNodeFactory()
+    aRootNode = aFactory.CreateGraph(aModel, cadex.ModelData_RM_Any)
+    aRootNode.SetDisplayMode(view.ModelPrs_DM_ShadedWithBoundaries)
+    
+    # Create scene and display all entities
+    aScene = view.ModelPrs_Scene()
+    aScene.AddRoot(aRootNode)
+    
+    # Setup offscreen viewport with transparent background and perspective camera
+    aViewPort = view.ModelPrs_OffscreenViewPort()
+    aViewPort.Resize(800, 600)
+    aViewPort.SetCameraProjectionType(view.ModelPrs_CPT_Perspective)
+    aViewPort.SetCameraPositionType(view.ModelPrs_CMT_Default)
+    aBackgroundColor = cadex.ModelData_Color(0x00000000)
+    aStyle = view.ModelPrs_BackgroundStyle(aBackgroundColor)
+    aViewPort.SetBackgroundStyle(aStyle)
+    
+    # Attach viewport to the scene
+    if not aViewPort.AttachToScene(aScene):
+        print("Unable to attach viewport to scene")
+        return 1
+    
+    # Apply scene changes to viewport and wait until all async operations will be finished
+    aScene.Update()
+    aScene.Wait()
+    
+    # Fit and center model on the image
+    aViewPort.FitAll()
+    
+    # Grab rendered frame into image
+    if not aViewPort.GrabToImage(cadex.Base_UTF16String(theDest)):
+        print("Failed to write the file " + theDest)
+        return 1
+    
     return 0
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: " + os.path.abspath(Path(__file__).resolve()) + " <input_file>, where:")
-        print("    <input_file>  is a name of the XML file to be read")
+        print("    <input_file>  is a name of the file to be read")
+        print("    <output_file> is a name of the PNG file to save the model")
         sys.exit(1)
 
     aSource = os.path.abspath(sys.argv[1])
-    sys.exit(main(aSource))
+    aDest = os.path.abspath(sys.argv[2])
+
+    sys.exit(main(aSource, aDest))

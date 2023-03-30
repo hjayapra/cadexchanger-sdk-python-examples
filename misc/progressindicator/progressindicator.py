@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -37,8 +37,7 @@ import os
 import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExACIS as acis
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
 
 class ProgressBarObserver(cadex.Base_ProgressStatus_Observer):
@@ -52,9 +51,8 @@ class ProgressBarObserver(cadex.Base_ProgressStatus_Observer):
         print(f"{theInfo.Value()}: complete!")
 
 def main(theSource: str):
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -79,7 +77,7 @@ def main(theSource: str):
                 if anIsOK and not aStatus.WasCanceled():
                     with cadex.Base_ProgressScope(aReaderScope, 75):    # 75% of ReaderScope (30% of TopScope)
                         anIsOK = aReader.Transfer(aModel)
-
+                        
             if anIsOK and not aStatus.WasCanceled():
                 with cadex.Base_ProgressScope(aTopScope, -1):        # The remaining 60% of TopScope for meshing
                     aMesher = cadex.ModelAlgo_BRepMesher()
@@ -101,3 +99,4 @@ if __name__ == "__main__":
     aSource = os.path.abspath(sys.argv[1])
 
     sys.exit(main(aSource))
+    

@@ -3,7 +3,7 @@
 # $Id$
 
 # Copyright (C) 2008-2014, Roman Lygin. All rights reserved.
-# Copyright (C) 2014-2022, CADEX. All rights reserved.
+# Copyright (C) 2014-2023, CADEX. All rights reserved.
 
 # This file is part of the CAD Exchanger software.
 
@@ -37,9 +37,7 @@ import os
 import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExAdvGeom as geom
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + "/../../"))
-import cadex_license as license
-
+sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
 
 class FaceCounter(cadex.ModelData_Model_VoidElementVisitor):
     def __init__(self):
@@ -55,9 +53,8 @@ class FaceCounter(cadex.ModelData_Model_VoidElementVisitor):
 
 
 def main(theSource: str, theDest: str):
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
+    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
+    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -100,7 +97,7 @@ def main(theSource: str, theDest: str):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("    <input_file>  is a name of the ACIS file to be read")
-        print("    <output_file> is a name of the XML file to Save() the model")
+        print("    <output_file> is a name of the XML file to Save() the model")     
         sys.exit(1)
 
     aSource = os.path.abspath(sys.argv[1])
