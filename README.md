@@ -9,7 +9,9 @@ The examples are provided under a permissive Modified BSD License. You may inser
 ## Requirements
 
 * Latest version of CAD Exchanger SDK
-* CPython 3.8 - 3.10
+* Windows x86-64: CPython 3.8 - 3.10
+* Linux x86-64: CPython 3.9 - 3.10
+* macOS is not supported as of now
 
 ## Running
 
@@ -20,6 +22,8 @@ To use the examples, first obtain the CAD Exchanger SDK evaluation [here](https:
     ```
     $ pip install cadexchanger --extra-index-url=<repo-link-from-email>
     ```
+
+    If you get an error message that `pip` was not able to find the package, please check the requirements above and make sure that your configuration is supported.
 
 2. Place the license key into the repository root.
 
