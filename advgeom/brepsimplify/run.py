@@ -30,23 +30,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import subprocess
 import sys
 from pathlib import Path
 from  os.path import abspath, dirname
 from brepsimplify import main
 
 aSource = abspath(dirname(Path(__file__).resolve()) + r"/../../models/transmissionhousing1.sat")
-aDest = abspath(dirname(Path(__file__).resolve()) + r"/transmissionhousing1.xml")
+aDest = abspath(dirname(Path(__file__).resolve()) + r"/transmissionhousing1.cdx")
 
-aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/brepsimplify.py")
-aPathToDevKey = abspath(dirname(Path(__file__).resolve()) + r"/../../cadex_license.lic")
-aPathToRuntimeKey = abspath(dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-import cadexchanger
-aPathToLicensingTool = abspath(dirname(Path(cadexchanger.__file__).resolve()) + r"/bin/LicensingTool")
-aRet = subprocess.run([aPathToLicensingTool, aPathToScript, aPathToDevKey, aPathToRuntimeKey])
-
-if aRet.returncode == 0:
-    sys.exit(main(aSource, aDest))
-else:
-    sys.exit(aRet.returncode)
+sys.exit(main(aSource, aDest))

@@ -30,7 +30,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import subprocess
 import sys
 from pathlib import Path
 from  os.path import abspath, dirname
@@ -39,14 +38,4 @@ from transfer import main
 aSource = abspath(dirname(Path(__file__).resolve()) + r"/../../models/omni_wheel.stp")
 aDest = abspath(dirname(Path(__file__).resolve()) + r"/omni_wheel.jt")
 
-aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/transfer.py")
-aPathToDevKey = abspath(dirname(Path(__file__).resolve()) + r"/../../cadex_license.lic")
-aPathToRuntimeKey = abspath(dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-import cadexchanger
-aPathToLicensingTool = abspath(dirname(Path(cadexchanger.__file__).resolve()) + r"/bin/LicensingTool")
-aRet = subprocess.run([aPathToLicensingTool, aPathToScript, aPathToDevKey, aPathToRuntimeKey])
-
-if aRet.returncode == 0:
-    sys.exit(main(aSource, aDest))
-else:
-    sys.exit(aRet.returncode)
+sys.exit(main(aSource, aDest))

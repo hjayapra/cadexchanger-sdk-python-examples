@@ -30,7 +30,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import subprocess
 import sys
 from pathlib import Path
 from os.path import abspath, dirname
@@ -38,14 +37,4 @@ from visualizationmesher import main
 
 aSource = abspath(dirname(Path(__file__).resolve()) + r"/../../models/LeverArm.xml")
 
-aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/visualizationmesher.py")
-aPathToDevKey = abspath(dirname(Path(__file__).resolve()) + r"/../../cadex_license.lic")
-aPathToRuntimeKey = abspath(dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-import cadexchanger
-aPathToLicensingTool = abspath(dirname(Path(cadexchanger.__file__).resolve()) + r"/bin/LicensingTool")
-aRet = subprocess.run([aPathToLicensingTool, aPathToScript, aPathToDevKey, aPathToRuntimeKey])
-
-if aRet.returncode == 0:
-    sys.exit(main(aSource))
-else:
-    sys.exit(aRet.returncode)
+sys.exit(main(aSource))

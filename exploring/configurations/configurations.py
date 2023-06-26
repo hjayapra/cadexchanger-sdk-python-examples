@@ -38,6 +38,7 @@ import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExSLD as sld
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
 
 class PartConfigurationVisitor(cadex.ModelData_Model_VoidElementVisitor):
     def __init__(self):
@@ -57,18 +58,19 @@ class PartConfigurationVisitor(cadex.ModelData_Model_VoidElementVisitor):
 
 
 def main(theSource: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
-    
+
     # Open the model
     aModel = cadex.ModelData_Model()
-    
+
     # Read all configurations
     aParameters = sld.SLD_ReaderParameters()
     aParameters.SetConfigurationsMode(sld.SLD_ReaderParameters.All)
-    
+
     aReader = cadex.ModelData_ModelReader();
     aReader.SetReaderParameters(aParameters)
 

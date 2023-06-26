@@ -37,6 +37,7 @@ import os
 import cadexchanger.CadExCore as cadex
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
 
 
 class RemovedSGEFinder(cadex.ModelData_Model_VoidElementVisitor):
@@ -66,8 +67,9 @@ class RemovedSGEFinder(cadex.ModelData_Model_VoidElementVisitor):
             self.SGEsToRemove[theParent] = [theElement]
 
 def main(theSource: str, theOutput: str, theNameToRemove: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -108,7 +110,7 @@ if __name__ == "__main__":
         print("Usage: " + os.path.abspath(Path(__file__).resolve()) +
               " <input_file> <output_file> <sge_to_remove>, where:")
         print("    <input_file>  is a name of the XML file to be read")
-        print("    <output_file>   is a name of the XML file where the output should be stored")
+        print("    <output_file>   is a name of the CDX file where the output should be stored")
         print("    <sge_to_remove> is a name of the scene graph elements to remove")
         sys.exit(1)
 

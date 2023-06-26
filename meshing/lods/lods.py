@@ -37,7 +37,7 @@ import os
 import cadexchanger.CadExCore as cadex
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
-
+import cadex_license as license
 
 def NumberOfTriangles(thePoly: cadex.ModelData_PolyRepresentation) -> int:
     trianglesNB = 0
@@ -67,8 +67,9 @@ def AddPolyToPart(thePart: cadex.ModelData_Part, theLOD):
 
 
 def main():
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -82,7 +83,7 @@ def main():
     aModel = cadex.ModelData_Model()
     aModel.AddRoot(aPart)
 
-    if not cadex.ModelData_ModelWriter().Write(aModel, cadex.Base_UTF16String("out/SphereWithLODs.xml")):
+    if not cadex.ModelData_ModelWriter().Write(aModel, cadex.Base_UTF16String("out/SphereWithLODs.cdx")):
         print("Unable to save the model")
         return 1
 

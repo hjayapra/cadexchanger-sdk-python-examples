@@ -38,7 +38,7 @@ import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExMesh as mesh
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
-
+import cadex_license as license
 
 import math
 
@@ -83,8 +83,9 @@ def PrintFaceToPolyAssociation(theFace: cadex.ModelData_Face,
                   f"(X: {aPoint.X()}, Y: {aPoint.Y()}, Z: {aPoint.Z()})")
 
 def main(theSource: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -112,7 +113,7 @@ def main(theSource: str):
     PrintFaceToPolyAssociation(aFace, aBRepToPolyAssociations)
     
     # Save the result
-    if not cadex.ModelData_ModelWriter().Write(aModel, cadex.Base_UTF16String("out/VisMesher.xml")):
+    if not cadex.ModelData_ModelWriter().Write(aModel, cadex.Base_UTF16String("out/VisMesher.cdx")):
         print("Unable to save the model")
         return 1
 

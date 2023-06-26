@@ -37,7 +37,7 @@ import os
 import cadexchanger.CadExCore as cadex
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
-
+import cadex_license as license
 
  # Visits directly every part and calls Poly representation exploring if a part has one
 class PartPolyVisitor(cadex.ModelData_Model_VoidElementVisitor):
@@ -127,8 +127,9 @@ class PartPolyVisitor(cadex.ModelData_Model_VoidElementVisitor):
 
 
 def main(theSource: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 

@@ -38,6 +38,8 @@ import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExAdvGeom as geom
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
+
 
 class FaceCounter(cadex.ModelData_Model_VoidElementVisitor):
     def __init__(self):
@@ -53,8 +55,9 @@ class FaceCounter(cadex.ModelData_Model_VoidElementVisitor):
 
 
 def main(theSource: str, theDest: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -88,7 +91,7 @@ def main(theSource: str, theDest: str):
 
     # Saving the simplified model
     if not cadex.ModelData_ModelWriter().Write(aNewModel, cadex.Base_UTF16String(theDest)):
-        print("Failed to save the .xml file")
+        print("Failed to save the .cdx file")
         return 1
 
     print("Completed")
@@ -97,7 +100,7 @@ def main(theSource: str, theDest: str):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("    <input_file>  is a name of the ACIS file to be read")
-        print("    <output_file> is a name of the XML file to Save() the model")     
+        print("    <output_file> is a name of the CDX file to Save() the model")     
         sys.exit(1)
 
     aSource = os.path.abspath(sys.argv[1])

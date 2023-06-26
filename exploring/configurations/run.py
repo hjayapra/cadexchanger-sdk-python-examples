@@ -38,14 +38,4 @@ from configurations import main
 
 aSource = abspath(dirname(Path(__file__).resolve()) + "/../../models/Configuration_Part.SLDPRT")
 
-aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/configurations.py")
-aPathToDevKey = abspath(dirname(Path(__file__).resolve()) + r"/../../cadex_license.lic")
-aPathToRuntimeKey = abspath(dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-import cadexchanger
-aPathToLicensingTool = abspath(dirname(Path(cadexchanger.__file__).resolve()) + r"/bin/LicensingTool")
-aRet = subprocess.run([aPathToLicensingTool, aPathToScript, aPathToDevKey, aPathToRuntimeKey])
-
-if aRet.returncode == 0:
-    sys.exit(main(aSource))
-else:
-    sys.exit(aRet.returncode)
+sys.exit(main(aSource))

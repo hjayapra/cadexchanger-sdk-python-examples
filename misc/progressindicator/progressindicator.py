@@ -38,6 +38,7 @@ import cadexchanger.CadExCore as cadex
 import cadexchanger.CadExACIS as acis
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
 
 
 class ProgressBarObserver(cadex.Base_ProgressStatus_Observer):
@@ -51,8 +52,9 @@ class ProgressBarObserver(cadex.Base_ProgressStatus_Observer):
         print(f"{theInfo.Value()}: complete!")
 
 def main(theSource: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 

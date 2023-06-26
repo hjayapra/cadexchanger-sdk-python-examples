@@ -37,11 +37,13 @@ import os
 import cadexchanger.CadExCore as cadex
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
 
 
 def main(theSource: str, theDest: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -58,10 +60,10 @@ def main(theSource: str, theDest: str):
     print(f"Model name: {aModel.Name()}")
     print(f"Number of roots: {aModel.NumberOfRoots()}")
 
-    # Saving the CDXFB file
+    # Saving the CDXWEB file
     aWriter = cadex.ModelData_ModelWriter()
     aParams = cadex.ModelData_WriterParameters()
-    aParams.SetFileFormat(cadex.ModelData_WriterParameters.Cdxfb)
+    aParams.SetFileFormat(cadex.ModelData_WriterParameters.CDXWEB)
     aParams.SetWriteBRepRepresentation(True)
     aParams.SetWritePolyRepresentation(True)
     aParams.SetPreferredLOD(cadex.ModelData_RM_MediumLOD)
@@ -71,7 +73,7 @@ def main(theSource: str, theDest: str):
     aWriter.SetWriterParameters(aParams)
 
     if not aWriter.Write(aModel, cadex.Base_UTF16String(theDest)):
-        print("Failed to save the .cdxfb file ", theDest)
+        print("Failed to save the .cdxweb file ", theDest)
         return 1
 
     print("Completed")
@@ -80,7 +82,7 @@ def main(theSource: str, theDest: str):
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("    <input_file>  is a name of the JT file to be read")
-        print("    <output_file> is a name of the CDXFB file to Save() the model")     
+        print("    <output_file> is a name of the CDXWEB file to Save() the model")     
         exit()
 
     aSource = os.path.abspath(sys.argv[1])

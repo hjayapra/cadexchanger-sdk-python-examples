@@ -30,20 +30,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import subprocess
 import sys
 from pathlib import Path
-from os.path import abspath, dirname
 from metadata import main
 
-aPathToScript = abspath(dirname(Path(__file__).resolve()) + r"/metadata.py")
-aPathToDevKey = abspath(dirname(Path(__file__).resolve()) + r"/../../cadex_license.lic")
-aPathToRuntimeKey = abspath(dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-import cadexchanger
-aPathToLicensingTool = abspath(dirname(Path(cadexchanger.__file__).resolve()) + r"/bin/LicensingTool")
-aRet = subprocess.run([aPathToLicensingTool, aPathToScript, aPathToDevKey, aPathToRuntimeKey])
-
-if aRet.returncode == 0:
-    sys.exit(main())
-else:
-    sys.exit(aRet.returncode)
+sys.exit(main())

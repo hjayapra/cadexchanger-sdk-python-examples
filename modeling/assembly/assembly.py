@@ -37,6 +37,7 @@ import os
 import cadexchanger.CadExCore as cadex
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
 import math
 
 def MakeDirection(theVector: cadex.ModelData_Vector) -> cadex.ModelData_Direction:
@@ -180,8 +181,9 @@ def CreateNutBoltAssembly(theNut: cadex.ModelData_Part,
 
 
 def main():
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
@@ -209,7 +211,7 @@ def main():
         aModel.AddRoot(anInstance)
 
     aWriter = cadex.ModelData_ModelWriter()
-    aWriter.Write(aModel, cadex.Base_UTF16String("out/assembly.xml"))
+    aWriter.Write(aModel, cadex.Base_UTF16String("out/assembly.cdx"))
 
     print("Completed")
     return 0

@@ -40,6 +40,7 @@ import edgeutil
 import faceutil
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
 
 
 def SaveModel(theShape: cadex.ModelData_Shape, theName: str) -> bool:
@@ -48,12 +49,13 @@ def SaveModel(theShape: cadex.ModelData_Shape, theName: str) -> bool:
     aPart =  cadex.ModelData_Part(aBRep, cadex.Base_UTF16String(theName))
     aModel.AddRoot(aPart)
 
-    aPath = "out/" + str(theName) + ".xml"
+    aPath = "out/" + str(theName) + ".cdx"
     return cadex.ModelData_ModelWriter().Write(aModel, cadex.Base_UTF16String(aPath))
 
 def main():
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 

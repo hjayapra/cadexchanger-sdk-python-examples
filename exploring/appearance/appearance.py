@@ -37,6 +37,7 @@ import os
 import cadexchanger.CadExCore as cadex
 
 sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
+import cadex_license as license
 
 class SubshapeAppearancesCollector(cadex.ModelData_BRepRepresentation_SubshapeVisitor):
     def __init__(self, theBRep: cadex.ModelData_BRepRepresentation, theAppSet: set):
@@ -106,8 +107,9 @@ class AppearancesCollector:
 
 
 def main(theSource: str):
-    anAbsolutePathToRuntimeKey = os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/runtime_key.lic")
-    if not cadex.LicenseManager.CADExLicense_ActivateRuntimeKeyFromAbsolutePath(anAbsolutePathToRuntimeKey):
+    aKey = license.Value()
+
+    if not cadex.LicenseManager.Activate(aKey):
         print("Failed to activate CAD Exchanger license.")
         return 1
 
