@@ -11,7 +11,7 @@ The examples are provided under a permissive Modified BSD License. You may inser
 * Latest version of CAD Exchanger SDK
 * Windows x86-64: CPython 3.7 - 3.11
 * Linux x86-64: CPython 3.7 - 3.11
-* macOS is not supported as of now
+* macOS Apple Silicon: Python 3.7 - 3.11
 
 ## Running
 

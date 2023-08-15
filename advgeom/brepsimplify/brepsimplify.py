@@ -98,7 +98,7 @@ def main(theSource: str, theDest: str):
     return 0
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print("    <input_file>  is a name of the ACIS file to be read")
         print("    <output_file> is a name of the CDX file to Save() the model")     
         sys.exit(1)

@@ -51,7 +51,7 @@ class SubshapeAppearancesCollector(cadex.ModelData_BRepRepresentation_SubshapeVi
     def ExploreShapeAppearances(self, theShape: cadex.ModelData_Shape):
         anApp = self.myBRep.Appearance(theShape)
         if anApp:
-            self.myApp.add(anApp)
+            self.myAppSet.add(anApp)
 
 
 class RepVisitor(cadex.ModelData_Part_RepresentationVisitor):
