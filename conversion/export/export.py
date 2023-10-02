@@ -59,14 +59,19 @@ def main(theSource: str, theDest: str):
     aWriterParams.SetLengthUnit(cadex.Base_LU_Centimeters)
     aWriterParams.SetToGenerateMtlFile(True)
 
-    # Converting model data to a new format
-    if not aWriter.Transfer(aModel):
-        print("Failed to transfer model data to specified format")
-        return 1
+    cadex.Base_Settings.Default().SetValue(cadex.Base_Settings.UseExceptions, True)
+    try:
+        # Converting model data to a new format
+        if not aWriter.Transfer(aModel):
+            print("Failed to transfer model data to specified format")
+            return 1
 
-    # Writing model data to file
-    if not aWriter.WriteFile(cadex.Base_UTF16String(theDest)):
-        print("Failed to write the file")
+        # Writing model data to file
+        if not aWriter.WriteFile(cadex.Base_UTF16String(theDest)):
+            print("Failed to write the file")
+            return 1
+    except cadex.Base_Exception as anEx:
+        print(anEx.What())
         return 1
 
     print("Completed")

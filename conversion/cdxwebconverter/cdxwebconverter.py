@@ -72,8 +72,13 @@ def main(theSource: str, theDest: str):
 
     aWriter.SetWriterParameters(aParams)
 
-    if not aWriter.Write(aModel, cadex.Base_UTF16String(theDest)):
-        print("Failed to save the .cdxweb file ", theDest)
+    cadex.Base_Settings.Default().SetValue(cadex.Base_Settings.UseExceptions, True)
+    try:
+        if not aWriter.Write(aModel, cadex.Base_UTF16String(theDest)):
+            print("Failed to save the .cdxweb file ", theDest)
+            return 1
+    except cadex.Base_Exception as anEx:
+        print(anEx.What())
         return 1
 
     print("Completed")

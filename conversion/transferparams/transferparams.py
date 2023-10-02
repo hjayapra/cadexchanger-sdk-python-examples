@@ -83,11 +83,15 @@ def main(theSource: str, theDest: str):
     aJTParams.SetFileSplitMode(jt.JT_WriterParameters.PerPart)
     aWriter.SetWriterParameters(aJTParams)
 
-    # Converting and writing the model to file
-    if not aWriter.Write(aModel, cadex.Base_UTF16String(theDest)):
-        print("Failed to convert and write the file to specified format " + theDest)
+    cadex.Base_Settings.Default().SetValue(cadex.Base_Settings.UseExceptions, True)
+    try:
+        # Converting and writing the model to file
+        if not aWriter.Write(aModel, cadex.Base_UTF16String(theDest)):
+            print("Failed to convert and write the file to specified format " + theDest)
+            return 1
+    except cadex.Base_Exception as anEx:
+        print(anEx.What())
         return 1
-
 
     print("Completed")
     return 0
