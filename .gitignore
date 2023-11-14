@@ -1,4 +1,5 @@
 out/
 __pycache__
 cadex_license.py
+mtk_license.py
 *.lic

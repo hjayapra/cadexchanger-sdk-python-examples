@@ -31,51 +31,13 @@
 
 
 import sys
+
 from pathlib import Path
-import os
+from os.path import abspath, dirname
 
-import cadexchanger.CadExCore as cadex
+from feature_recognizer import main
 
-sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/../../"))
-import cadex_license as license
+aSource = abspath(dirname(Path(__file__).resolve()) + "/../../../models/Fresamento_CAM1_v3.stp")
+anOperation = "milling"
 
-
-def main():
-    aKey = license.Value()
-
-    if not cadex.LicenseManager.Activate(aKey):
-        print("Failed to activate CAD Exchanger license.")
-        return 1
-
-    # Create a simple box
-    aBox = cadex.ModelAlgo_TopoPrimitives.CreateBox(5.0, 5.0, 5.0)
-    aBRep = cadex.ModelData_BRepRepresentation(aBox)
-
-    # Color the box
-    aFaceIt = cadex.ModelData_Shape_Iterator(aBox, cadex.ModelData_ST_Face)
-    r = 10
-    g = 10
-    b = 250
-    a = 255
-    for aFace in aFaceIt:
-        r += 30
-        b -= 30
-        anApp = cadex.ModelData_Appearance(cadex.ModelData_Color(r, g, b, a))
-        aBRep.SetAppearance(aFace, anApp)
-
-    # Change properties
-    aPart = cadex.ModelData_Part(aBRep, cadex.Base_UTF16String("ColorBox"))
-    aTable = cadex.ModelData_PropertyTable()
-    aTable.AddUTF16String(cadex.Base_UTF16String("Color"), cadex.Base_UTF16String("Different"))
-    aPart.AddProperties(aTable)
-
-    aModel = cadex.ModelData_Model()
-    aModel.AddRoot(aPart)
-    cadex.ModelData_ModelWriter().Write(aModel, cadex.Base_UTF16String("out/ColorBox.cdx"))
-
-    print("Completed")
-    return 0
-
-if __name__ == "__main__":
-    sys.exit(main())
-
+sys.exit(main(aSource, anOperation))

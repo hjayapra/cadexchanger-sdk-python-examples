@@ -1,8 +1,8 @@
 # CAD Exchanger SDK examples in Python
 
-This repository contains examples for CAD Exchanger SDK utilizing the Python API.
+This repository contains examples for CAD Exchanger SDK and Manufacturing Toolkit utilizing the Python API.
 
-More information about CAD Exchanger SDK can be found [here](https://cadexchanger.com/products/sdk/). You can find overview of available examples and a brief summary for each one [here](https://docs.cadexchanger.com/sdk/sdk_all_examples.html).
+More information about CAD Exchanger SDK can be found [here](https://cadexchanger.com/products/sdk/). You can find overview of available examples and a brief summary for each one [here](https://docs.cadexchanger.com/sdk/sdk_all_examples.html). More information about Manufacturing Toolkit can be found [here](https://manufacturing.cadexchanger.com/).
 
 The examples are provided under a permissive Modified BSD License. You may insert their source code into your application and modify as needed.
 

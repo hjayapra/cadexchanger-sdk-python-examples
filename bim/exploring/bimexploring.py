@@ -40,7 +40,7 @@ sys.path.append(os.path.abspath(os.path.dirname(Path(__file__).resolve()) + r"/.
 import cadex_license as license
 
 
-class BimStructureVisitor(cadex.ModelData_BIMElementVisitor):
+class BimStructureVisitor(cadex.ModelData_BIMVisitor):
     def __init__(self):
         super().__init__()
         self.myNestingLevel = 0
@@ -75,13 +75,13 @@ class BimStructureVisitor(cadex.ModelData_BIMElementVisitor):
     def VisitLeaveBIMSite(self, theElement: cadex.ModelData_BIMSite):
         self.myNestingLevel -= 1
 
-    def VisitEnterBIMSpace(self, theElement: cadex.ModelData_BIMSpace) -> bool:
+    def VisitEnterBIMCompositeElement(self, theElement: cadex.ModelData_BIMCompositeElement) -> bool:
         print(self.GetFiller(), theElement.Name())
-        self.AddCounts("Space")
+        self.AddCounts("CompositeElement")
         self.myNestingLevel += 1
         return True
 
-    def VisitLeaveBIMSpace(self, theElement: cadex.ModelData_BIMSpace):
+    def VisitLeaveBIMCompositeElement(self, theElement: cadex.ModelData_BIMCompositeElement):
         self.myNestingLevel -= 1
 
     def VisitEnterBIMStorey(self, theElement: cadex.ModelData_BIMStorey) -> bool:
